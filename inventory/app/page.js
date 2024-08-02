@@ -1,69 +1,79 @@
 'use client'
 import Image from 'next/image'
-import {useState, useEffect} from 'react'
-import {firestore} from '@/firebase'
-import { Box, Stack, Typography } from "@mui/material";
+import { useState, useEffect } from 'react'
+import { firestore } from '@/firebase'
+import { Modal, Box, Stack, Typography } from "@mui/material";
 
-const items = ['tomato', 'onion', 'ginger', 'garlic']
 
 export default function Home() {
   const [inventory, setInventory] = useState([])
-  const [open, setOpen] = useState([])
+  const [open, setOpen] = useState(false)
   const [itemName, setItemName] = useState('')
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'))
     const docs = await getDocs(snapshot)
     const inventoryList = []
-    docs.forEach((doc)=>{
+    docs.forEach((doc) => {
       inventoryList.push({
-      name: doc.id,
-      ...doc.detail()
+        name: doc.id,
+        ...doc.data()
       })
     })
     setInventory(inventoryList)
   }
+
+  const addItem = async (item) => {
+    const docRef = doc(collection(firestore, 'inventory'), item)
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()) {
+      const { quantity } = docSnap.data()
+      await setDoc(docRef, { quantity: quantity + 1 })
+    }
+    else {
+      await setDoc(docRef, { quantity: quantity + 1 })
+    }
+    await updateInventory()
+  }
+
+  const removeItem = async (item) => {
+    const docRef = doc(collection(firestore, 'inventory'), item)
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()) {
+      const { quantity } = docSnap.data()
+      if (quantity === 1) {
+        await deleteDoc(docRef)
+      }
+      else {
+        await setDoc(docRef, { quantity: quantity - 1 })
+      }
+    }
+    await updateInventory()
+  }
+
   useEffect(() => {
     updateInventory()
   }, [])
-  return (
-    <Box
-      width='100vw'
-      height='100vh'
-      display={'flex'}
-      justifyContent={'center'}
-      alignItems={'center'}
-      flexDirection='column'
-    >
-      <Box  border={'1px solid #333'}>
-      <Box width='600px' height='100px' bgcolor={'#FF474C'} display={'flex'}
-       justifyContent={'center'}
-       alignItems={'center'}
-      >
-        <Typography variant={'h2'} color={'#333'} textAlign='center'>
-          Items
-        </Typography>
-      </Box>
 
-      <Stack width='600px' height='200px' spacing={2} overflow={'auto'}>
-        {items.map((i) => (
-          <Box
-            key={i}
-            height='300px'
-            width='100%'
-            bgcolor={'#f0f0f0'}
-            alignItems={'center'}
-            justifyContent={'center'}
-            display='flex'>
-            <Typography
-              variant="h4"
-              textAlign={'center'}>
-              {i.charAt(0).toUpperCase() + i.slice(1)}
-            </Typography>
-          </Box>
-        ))}
-      </Stack>
-      </Box>
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  return (
+    <Box width='100vw'
+    height ='100vh' 
+    display='flex' 
+    justifyContent='center'
+    alignItems='center'
+    gap={2}>
+      <Modal open={open} onClose={handleClose}>
+        <Box position='absolute' top='50%'></Box>
+      </Modal>
+      <Typography variant='h1' textAlign='center' fontSize='3em'>
+        Inventory Management</Typography>
     </Box>
-  );
+  )
 }
+
+
