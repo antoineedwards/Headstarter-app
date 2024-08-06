@@ -60,86 +60,117 @@ export default function Home() {
   const handleClose = () => setOpen(false)
 
   return (
-    <Box width='100vw'
+    <Box className='docContainer'
+      width='100vw'
       height='100vh'
       display='flex'
-      flexDirection='column'
       justifyContent='center'
       alignItems='center'
-      gap={2}>
-      <Typography variant='h1' textAlign='center' fontSize='3em'>
-        Inventory Management
-      </Typography>
-      <Modal open={open} onClose={handleClose}>
-        <Box position='absolute' left='50%' top='50%'
-          width='400px' bgcolor='white'
-          border='2px solid black'
+      gap={2}
+      bgcolor={'black'}>
+      <Box 
+      display='flex'
+      flexDirection='column'
+      gap={5}>
+        <Box className='addField'
+          bgcolor='rgb(28, 28, 28)'
+          border='1px solid white'
+          borderRadius={'5px'}
           boxShadow={18} p='4' padding='10px'
           display={'flex'} flexDirection={'column'} gap={3}
-          sx={{
-            transform: 'translate(-50%, -50%)'
-          }}>
-          <Typography variant='h6'>Add Item</Typography>
+          height='460px'>
+          <Typography variant='h7' color='white'>Add Item</Typography>
           <Stack width='100%' direction='row' spacing={2}>
-            <TextField
-              variant='outlined'
+            <TextField className='textBox'
+              variant='outlined' helperText
+              label='Enter Item Name'
               value={itemName}
-              fullWidth
               onChange={(e) => {
                 setItemName(e.target.value)
               }}
             ></TextField>
-            <Button
+            <Button className='button'
               variant='outlined' onClick={() => {
                 addItem(itemName)
                 setItemName('')
                 handleClose()
               }}>Add</Button>
           </Stack>
+          <Typography variant='h7' color='white'>Items will be sorted by alphabetical order.</Typography>
         </Box>
-      </Modal>
-      <Button variant='contained' onClick={handleOpen}>
-        Add New Item
-      </Button>
-      <Box border='1px solid #333'>
-        <Box width='800px' height='100px'
-          bgcolor='#add8e6' display='flex'
-          alignItems='center' justifyContent='center'>
-          <Typography variant='h2' color='#333'>
-            Inventory Items
-          </Typography>
+        <Box className='addField'
+          bgcolor='rgb(28, 28, 28)'
+          border='1px solid white'
+          borderRadius={'5px'}
+          boxShadow={18} p='4' padding='10px'
+          display={'flex'} flexDirection={'column'} gap={3}
+          height='500p'>
+          <Typography variant='h7' color='white'>Search</Typography>
+          <Stack width='100%' direction='row' spacing={2}>
+            <TextField className='textBox'
+              variant='outlined' helperText
+              label='Enter Item Name'
+              value={itemName}
+              onChange={(e) => {
+                setItemName(e.target.value)
+              }}
+            ></TextField>
+            <Button className='button'
+              variant='outlined' onClick={() => {
+                addItem(itemName)
+                setItemName('')
+                handleClose()
+              }}>Find</Button>
+          </Stack>
         </Box>
       </Box>
-      <Stack width='800px' height='300px' spacing={2} overflow='auto'>
-        {
-          inventory.map(({ name, quantity }) => (
-            <Box key={name} width='100%' minHeight='150px'
-              display='flex' alignItems='center'
-              justifyContent='space-Between'
-              bgcolor='#f0f0f0'
-              padding='5'>
-              <Typography variant='h3'>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </Typography>
-              <Typography variant='h3'>
-                {quantity}
-              </Typography>
-              <Stack direction='row' spacing={2}>
-                <Button variant='contained' onClick={() => {
-                  addItem(name)
-                }}>
-                  Add
-                </Button>
-                <Button variant='contained' onClick={() => {
-                  removeItem(name)
-                }}>
-                  Remove
-                </Button>
-              </Stack>
-            </Box>
-          ))
-        }
-      </Stack>
+      <Box id='inventoryContainer'
+        display={'flex'}
+        flexDirection={'column'}
+        alignItems='center' justifyContent='center'>
+        <Box classname='inventoryItemsBox'>
+          <Box height='100px' className='inventoryItems' display='flex'
+            alignItems='center' justifyContent='center' width='100%'>
+            <Typography variant='h4' color='white'>
+              Inventory Items
+            </Typography>
+          </Box>
+        </Box>
+        <Stack colo width='700px' minheight='300px' maxHeight='500px' gap={1} overflow='auto'
+        >
+          {
+            inventory.map(({ name, quantity }) => (
+              <Box className='idBox' className='itemMapping'
+                key={name} width='100%' minHeight='100px'
+                display='flex' alignItems='center'
+                justifyContent='space-Between'
+                bgcolor='white'
+              >
+                <Typography className='itemMapText' variant='h5'>
+                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                </Typography>
+                <Typography variant='h5' className='itemMapText'>
+                  {quantity}
+                </Typography>
+                <Stack direction='row' spacing={2}>
+                  <Button className='incButton'
+                    variant='contained' onClick={() => {
+                      addItem(name)
+                    }}>
+                    +
+                  </Button>
+                  <Button className='incButton'
+                    variant='contained' onClick={() => {
+                      removeItem(name)
+                    }}>
+                    -
+                  </Button>
+                </Stack>
+              </Box>
+            ))
+          }
+        </Stack>
+      </Box>
     </Box>
   )
 }
